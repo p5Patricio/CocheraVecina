@@ -110,6 +110,20 @@ export const api = {
       request<User>("/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       }),
+    uploadAvatar: async (token: string, file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(`${API_BASE}/auth/avatar`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.detail || "Error al subir el avatar");
+      }
+      return res.json();
+    },
   },
   spots: {
     search: (params?: { city?: string; vehicle_size?: string; space_type?: string }) => {
@@ -123,6 +137,20 @@ export const api = {
         headers: { Authorization: `Bearer ${token}` },
         body: JSON.stringify(data),
       }),
+    uploadPhoto: async (token: string, spotId: string, file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(`${API_BASE}/spots/${spotId}/upload-photo`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.detail || "Error al subir la imagen");
+      }
+      return res.json();
+    },
     getMySpots: (token: string) =>
       request<ParkingSpot[]>("/spots/my-spots", {
         headers: { Authorization: `Bearer ${token}` },

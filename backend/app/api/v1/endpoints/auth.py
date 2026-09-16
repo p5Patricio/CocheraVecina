@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,6 +8,7 @@ from app.core.security import create_access_token
 from app.models.user import User
 from app.schemas.user import UserCreate, UserLogin, UserOut, Token
 from app.services.auth_service import AuthService
+from app.services.image_service import ImageService
 
 router = APIRouter()
 
@@ -49,4 +50,22 @@ async def get_me(
     current_user: User = Depends(get_current_active_user),
 ):
     """Fetch profile of currently authenticated user."""
+    return current_user
+
+
+@router.post("/avatar", response_model=UserOut)
+async def upload_avatar(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_active_user),
+    session: AsyncSession = Depends(get_db),
+):
+    """
+    Upload and optimize profile avatar picture.
+    Resizes to 400x400 max, strips EXIF, and converts to WebP.
+    """
+    url = await ImageService.process_and_save(file, subfolder="avatars", max_dimension=400, quality=85)
+    current_user.avatar_url = url
+    session.add(current_user)
+    await session.commit()
+    await session.refresh(current_user)
     return current_user

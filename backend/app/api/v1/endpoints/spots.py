@@ -1,6 +1,6 @@
 from datetime import date
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_active_user
@@ -10,6 +10,7 @@ from app.schemas.spot import SpotCreate, SpotOut, SpotImageCreate, SpotImageOut,
 from app.schemas.booking import BookingQuoteRequest, BookingQuoteResponse
 from app.services.spot_service import SpotService
 from app.services.booking_service import BookingService
+from app.services.image_service import ImageService
 
 router = APIRouter()
 
@@ -84,6 +85,41 @@ async def add_spot_image(
         spot_id=spot_id,
         image_url=image_in.url,
         order=image_in.display_order,
+    )
+
+
+@router.post("/{spot_id}/upload-photo", response_model=SpotImageOut, status_code=status.HTTP_201_CREATED)
+async def upload_spot_photo(
+    spot_id: str,
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_active_user),
+    session: AsyncSession = Depends(get_db),
+):
+    """
+    Upload a photo file for a parking spot.
+    Automatically optimizes to lightweight WebP, strips EXIF metadata, and resizes to max 1600px.
+    """
+    spot = await SpotService.get_by_id(session, spot_id)
+    if not spot:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Parking spot not found."
+        )
+    if spot.host_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to add photos to this spot."
+        )
+
+    # Process and compress to WebP
+    webp_url = await ImageService.process_and_save(file, subfolder="spots", max_dimension=1600, quality=82)
+
+    return await SpotService.add_image(
+        session,
+        host_id=current_user.id,
+        spot_id=spot_id,
+        image_url=webp_url,
+        order=len(spot.images),
     )
 
 

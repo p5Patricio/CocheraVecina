@@ -15,6 +15,8 @@ import {
   ExternalLink,
   ShieldCheck,
   AlertCircle,
+  Camera,
+  Image as ImageIcon,
 } from "lucide-react";
 import AuthModal from "@/components/AuthModal";
 
@@ -44,6 +46,8 @@ function DashboardContent() {
   const [newSpotPrice, setNewSpotPrice] = useState("150");
   const [newSpotSize, setNewSpotSize] = useState("sedan");
   const [newSpotType, setNewSpotType] = useState("covered");
+  const [newSpotPhoto, setNewSpotPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [newSpotLoading, setNewSpotLoading] = useState(false);
 
   const [loading, setLoading] = useState(true);
@@ -141,7 +145,7 @@ function DashboardContent() {
     if (!token) return;
     setNewSpotLoading(true);
     try {
-      await api.spots.create(token, {
+      const createdSpot = await api.spots.create(token, {
         title: newSpotTitle,
         description: newSpotDesc,
         address_line: newSpotAddress,
@@ -155,7 +159,18 @@ function DashboardContent() {
         vehicle_size: newSpotSize,
         space_type: newSpotType,
       });
+
+      if (newSpotPhoto && createdSpot && createdSpot.id) {
+        try {
+          await api.spots.uploadPhoto(token, createdSpot.id, newSpotPhoto);
+        } catch (uploadErr) {
+          console.error("Error subiendo foto:", uploadErr);
+        }
+      }
+
       setIsNewSpotOpen(false);
+      setNewSpotPhoto(null);
+      setPhotoPreview(null);
       await loadData(token);
     } catch (err: any) {
       alert(err.message);
@@ -496,6 +511,37 @@ function DashboardContent() {
                     <option value="covered">Techado</option>
                     <option value="uncovered">Al aire libre</option>
                   </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700">Foto de tu cochera (Opcional)</label>
+                <p className="text-[11px] text-slate-500 mb-1.5">Se convertirá a formato WebP ultraligero y seguro.</p>
+                <div className="flex items-center gap-3">
+                  <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100">
+                    <Camera className="h-4 w-4 text-blue-600" />
+                    <span>{newSpotPhoto ? "Cambiar foto" : "Seleccionar foto"}</span>
+                    <input
+                      type="file"
+                      accept="image/png, image/jpeg, image/webp"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setNewSpotPhoto(file);
+                          setPhotoPreview(URL.createObjectURL(file));
+                        }
+                      }}
+                    />
+                  </label>
+                  {photoPreview && (
+                    <div className="relative h-10 w-14 overflow-hidden rounded-lg border border-slate-200 shadow-sm">
+                      <img src={photoPreview} alt="Preview" className="h-full w-full object-cover" />
+                    </div>
+                  )}
+                  {newSpotPhoto && (
+                    <span className="text-xs text-slate-600 truncate max-w-[150px]">{newSpotPhoto.name}</span>
+                  )}
                 </div>
               </div>
 
