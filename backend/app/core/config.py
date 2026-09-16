@@ -33,8 +33,9 @@ class Settings(BaseSettings):
     HOST_SERVICE_FEE_PERCENTAGE: float = 0.05
 
     # CORS
-    FRONTEND_URL: str = "http://localhost:3000"
-    BACKEND_CORS_ORIGINS: List[str] = [
+    FRONTEND_URL: str = "https://cocheravecina.patodev.com"
+    BACKEND_CORS_ORIGINS: Union[str, List[str]] = [
+        "https://cocheravecina.patodev.com",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
     ]
@@ -42,11 +43,17 @@ class Settings(BaseSettings):
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
-        elif isinstance(v, (list, str)):
-            return v
-        raise ValueError(v)
+        if isinstance(v, str):
+            if v.startswith("[") and v.endswith("]"):
+                import json
+                try:
+                    return json.loads(v)
+                except Exception:
+                    pass
+            return [i.strip() for i in v.split(",") if i.strip()]
+        elif isinstance(v, (list, tuple, set)):
+            return list(v)
+        return []
 
     model_config = SettingsConfigDict(
         env_file=".env",
