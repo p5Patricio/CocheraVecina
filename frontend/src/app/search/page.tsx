@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { api, ParkingSpot } from "@/lib/api";
+import { api, ParkingSpot, getMediaUrl } from "@/lib/api";
 import { Shield, Car, MapPin, CheckCircle, Search, Calendar, Star } from "lucide-react";
 import Link from "next/link";
 
@@ -132,7 +132,7 @@ function SearchContent() {
               <div className="relative h-48 w-full bg-slate-100 flex items-center justify-center overflow-hidden">
                 {spot.images && spot.images.length > 0 ? (
                   <img
-                    src={spot.images[0].url}
+                    src={getMediaUrl(spot.images[0].url)}
                     alt={spot.title}
                     className="h-full w-full object-cover transition group-hover:scale-105"
                   />

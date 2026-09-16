@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { User, api } from "@/lib/api";
+import { User, api, getMediaUrl } from "@/lib/api";
 import AuthModal from "@/components/AuthModal";
 import { ShieldCheck, Car, User as UserIcon, PlusCircle, LogOut } from "lucide-react";
 
@@ -72,7 +72,15 @@ export default function Navbar() {
                   href="/dashboard"
                   className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
                 >
-                  <UserIcon className="h-3.5 w-3.5 text-blue-600" />
+                  {user.avatar_url ? (
+                    <img
+                      src={getMediaUrl(user.avatar_url)}
+                      alt="Avatar"
+                      className="h-5 w-5 rounded-full object-cover"
+                    />
+                  ) : (
+                    <UserIcon className="h-3.5 w-3.5 text-blue-600" />
+                  )}
                   <span>{user.full_name.split(" ")[0]}</span>
                 </Link>
                 <button

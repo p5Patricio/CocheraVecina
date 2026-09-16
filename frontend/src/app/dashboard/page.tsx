@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { api, Booking, ParkingSpot, User } from "@/lib/api";
+import { api, Booking, ParkingSpot, User, getMediaUrl } from "@/lib/api";
 import {
   Car,
   Calendar,
@@ -49,6 +49,8 @@ function DashboardContent() {
   const [newSpotPhoto, setNewSpotPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [newSpotLoading, setNewSpotLoading] = useState(false);
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const [spotPhotoLoading, setSpotPhotoLoading] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -179,6 +181,36 @@ function DashboardContent() {
     }
   };
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !token) return;
+    setAvatarLoading(true);
+    try {
+      const updatedUser = await api.auth.uploadAvatar(token, file);
+      setUser(updatedUser);
+    } catch (err: any) {
+      alert(err.message || "Error al subir foto de perfil");
+    } finally {
+      setAvatarLoading(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleSpotPhotoUpload = async (spotId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !token) return;
+    setSpotPhotoLoading(spotId);
+    try {
+      await api.spots.uploadPhoto(token, spotId, file);
+      await loadData(token);
+    } catch (err: any) {
+      alert(err.message || "Error al subir foto de la cochera");
+    } finally {
+      setSpotPhotoLoading(null);
+      e.target.value = "";
+    }
+  };
+
   if (!user && !loading) {
     return (
       <div className="mx-auto max-w-md py-20 text-center">
@@ -205,6 +237,63 @@ function DashboardContent() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      {/* Profile Header Card */}
+      {user && (
+        <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              {user.avatar_url ? (
+                <img
+                  src={getMediaUrl(user.avatar_url)}
+                  alt={user.full_name}
+                  className="h-16 w-16 rounded-full object-cover border-2 border-blue-600 shadow-sm"
+                />
+              ) : (
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 border-2 border-dashed border-slate-300 text-slate-400">
+                  <Camera className="h-7 w-7" />
+                </div>
+              )}
+              {avatarLoading && (
+                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 text-white text-xs font-bold">
+                  ...
+                </div>
+              )}
+            </div>
+
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-xl font-bold text-slate-900">{user.full_name}</h1>
+                <span
+                  className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                    user.identity_status === "verified"
+                      ? "bg-green-50 text-green-700 border border-green-200"
+                      : "bg-amber-50 text-amber-700 border border-amber-200"
+                  }`}
+                >
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  {user.identity_status === "verified" ? "Identidad Verificada" : "Identidad Pendiente"}
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-1">{user.email}</p>
+            </div>
+          </div>
+
+          <div>
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition shadow-sm">
+              <Camera className="h-4 w-4 text-blue-600" />
+              <span>{user.avatar_url ? "Cambiar foto de perfil" : "Subir foto"}</span>
+              <input
+                type="file"
+                accept="image/png, image/jpeg, image/webp"
+                className="hidden"
+                disabled={avatarLoading}
+                onChange={handleAvatarUpload}
+              />
+            </label>
+          </div>
+        </div>
+      )}
+
       {/* Dashboard Tabs */}
       <div className="flex border-b border-slate-200">
         <button
@@ -404,14 +493,53 @@ function DashboardContent() {
             ) : (
               <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {hostSpots.map((s) => (
-                  <div key={s.id} className="rounded-xl border border-slate-200 p-4 bg-white">
-                    <h3 className="font-bold text-sm text-slate-900 line-clamp-1">{s.title}</h3>
-                    <p className="text-xs text-slate-500 mt-1">{s.address_line}, {s.city}</p>
-                    <div className="mt-3 flex justify-between items-center text-xs">
-                      <span className="font-bold text-slate-900">${(s.price_per_day / 100).toFixed(0)} MXN / día</span>
-                      <span className="rounded bg-blue-50 px-2 py-0.5 font-semibold text-blue-600">
-                        {s.vehicle_size.toUpperCase()}
-                      </span>
+                  <div key={s.id} className="overflow-hidden rounded-xl border border-slate-200 bg-white flex flex-col">
+                    {/* Spot Cover Image */}
+                    <div className="relative h-44 w-full bg-slate-100 flex items-center justify-center overflow-hidden">
+                      {s.images && s.images.length > 0 ? (
+                        <img
+                          src={getMediaUrl(s.images[0]?.url)}
+                          alt={s.title}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center gap-1 text-slate-400">
+                          <Car className="h-8 w-8 text-slate-300" />
+                          <span className="text-[11px]">Sin fotos publicadas</span>
+                        </div>
+                      )}
+                      <div className="absolute top-2.5 right-2.5">
+                        <span className="rounded-full bg-black/60 px-2.5 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm">
+                          {s.images?.length || 0} {s.images?.length === 1 ? "foto" : "fotos"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-4 flex flex-1 flex-col justify-between">
+                      <div>
+                        <h3 className="font-bold text-sm text-slate-900 line-clamp-1">{s.title}</h3>
+                        <p className="text-xs text-slate-500 mt-1">{s.address_line}, {s.city}</p>
+                        <div className="mt-3 flex justify-between items-center text-xs">
+                          <span className="font-bold text-slate-900">${(s.price_per_day / 100).toFixed(0)} MXN / día</span>
+                          <span className="rounded bg-blue-50 px-2 py-0.5 font-semibold text-blue-600">
+                            {s.vehicle_size.toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition shadow-sm">
+                          <Camera className="h-3.5 w-3.5 text-blue-600" />
+                          <span>{spotPhotoLoading === s.id ? "Subiendo..." : "Agregar foto"}</span>
+                          <input
+                            type="file"
+                            accept="image/png, image/jpeg, image/webp"
+                            className="hidden"
+                            disabled={spotPhotoLoading === s.id}
+                            onChange={(e) => handleSpotPhotoUpload(s.id, e)}
+                          />
+                        </label>
+                      </div>
                     </div>
                   </div>
                 ))}

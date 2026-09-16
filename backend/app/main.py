@@ -1,8 +1,12 @@
 import os
+import mimetypes
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+
+# Ensure webp mime type is properly registered on all operating systems
+mimetypes.add_type("image/webp", ".webp")
 
 from app.core.config import settings
 from app.core.database import engine, Base

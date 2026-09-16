@@ -1,10 +1,20 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
+export function getMediaUrl(path?: string | null): string {
+  if (!path) return "";
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+  const origin = API_BASE.replace(/\/api\/v1\/?$/, "");
+  return `${origin}${path.startsWith("/") ? "" : "/"}${path}`;
+}
+
 export interface User {
   id: string;
   email: string;
   full_name: string;
   phone?: string;
+  avatar_url?: string;
   stripe_account_id?: string;
   identity_status: string;
 }

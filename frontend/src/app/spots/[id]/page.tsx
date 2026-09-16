@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { api, ParkingSpot, BookingQuote } from "@/lib/api";
-import { Shield, Car, MapPin, Calendar, Check, Info, AlertCircle, ArrowLeft } from "lucide-react";
+import { api, ParkingSpot, BookingQuote, getMediaUrl } from "@/lib/api";
+import { Shield, Car, MapPin, Calendar, Check, Info, AlertCircle, ArrowLeft, User as UserIcon } from "lucide-react";
 import AuthModal from "@/components/AuthModal";
 import Link from "next/link";
 
@@ -13,6 +13,7 @@ export default function SpotDetailPage() {
   const spotId = params.id as string;
 
   const [spot, setSpot] = useState<ParkingSpot | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -107,7 +108,11 @@ export default function SpotDetailPage() {
           {/* Main Photo */}
           <div className="relative h-72 sm:h-96 w-full rounded-2xl bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200">
             {spot.images && spot.images.length > 0 ? (
-              <img src={spot.images[0].url} alt={spot.title} className="h-full w-full object-cover" />
+              <img
+                src={getMediaUrl(spot.images[selectedImageIndex || 0]?.url || spot.images[0].url)}
+                alt={spot.title}
+                className="h-full w-full object-cover"
+              />
             ) : (
               <div className="flex flex-col items-center gap-2 text-slate-400">
                 <Car className="h-16 w-16 text-slate-300" />
@@ -124,6 +129,30 @@ export default function SpotDetailPage() {
             </div>
           </div>
 
+          {/* Clickable Image Thumbnails */}
+          {spot.images && spot.images.length > 1 && (
+            <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+              {spot.images.map((img, idx) => (
+                <button
+                  key={img.id || idx}
+                  type="button"
+                  onClick={() => setSelectedImageIndex(idx)}
+                  className={`relative h-16 w-20 flex-shrink-0 overflow-hidden rounded-xl border-2 transition ${
+                    (selectedImageIndex || 0) === idx
+                      ? "border-blue-600 ring-2 ring-blue-600/30"
+                      : "border-transparent opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <img
+                    src={getMediaUrl(img.url)}
+                    alt={`Foto ${idx + 1}`}
+                    className="h-full w-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* Details */}
           <div className="mt-6">
             <div className="flex items-center gap-2 text-xs font-bold text-blue-600 uppercase tracking-wider">
@@ -133,9 +162,22 @@ export default function SpotDetailPage() {
             <h1 className="mt-1 text-2xl font-extrabold text-slate-900 sm:text-3xl">
               {spot.title}
             </h1>
-            <p className="mt-1 text-xs text-slate-500">
-              Anfitrión: <span className="font-semibold text-slate-800">{spot.host?.full_name || "Vecino verificado"}</span>
-            </p>
+            <div className="mt-2 flex items-center gap-2.5">
+              {spot.host?.avatar_url ? (
+                <img
+                  src={getMediaUrl(spot.host.avatar_url)}
+                  alt={spot.host.full_name}
+                  className="h-7 w-7 rounded-full object-cover border border-slate-200"
+                />
+              ) : (
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 border border-slate-200 text-slate-500">
+                  <UserIcon className="h-3.5 w-3.5" />
+                </div>
+              )}
+              <p className="text-xs text-slate-500">
+                Anfitrión: <span className="font-semibold text-slate-800">{spot.host?.full_name || "Vecino verificado"}</span>
+              </p>
+            </div>
 
             <div className="mt-6 border-t border-slate-200 pt-6">
               <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">

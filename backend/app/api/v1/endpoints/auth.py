@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_active_user
-from app.core.database import get_db
+from app.core.database import get_db, atomic_transaction
 from app.core.security import create_access_token
 from app.models.user import User
 from app.schemas.user import UserCreate, UserLogin, UserOut, Token
@@ -64,8 +64,8 @@ async def upload_avatar(
     Resizes to 400x400 max, strips EXIF, and converts to WebP.
     """
     url = await ImageService.process_and_save(file, subfolder="avatars", max_dimension=400, quality=85)
-    current_user.avatar_url = url
-    session.add(current_user)
-    await session.commit()
+    async with atomic_transaction(session):
+        current_user.avatar_url = url
+        session.add(current_user)
     await session.refresh(current_user)
     return current_user
