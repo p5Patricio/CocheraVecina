@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <style>
+    @media (prefers-color-scheme: dark) {
+      .car-body { stroke: #F8FAFC; }
+      .canopy-arch { stroke: #38BDF8; }
+      .canopy-fill { fill: #0284C7; }
+    }
+  </style>
+  <!-- Carport Tensile Canopy Roof -->
+  <path d="M 8 36 C 14 18, 50 18, 56 36" stroke="#0F172A" stroke-width="3" stroke-linecap="round" fill="none" class="canopy-arch" />
+  <path d="M 12 33 C 18 20, 46 20, 52 33 Z" fill="#2563EB" class="canopy-fill" opacity="0.9" />
+  <path d="M 12 33 L 12 48" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round" class="canopy-arch" />
+  <!-- Car Silhouette -->
+  <path d="M 16 46 L 19 41 C 21 38, 25 37, 28 37 L 38 37 C 42 37, 46 39, 48 42 L 51 46 C 52 46, 53 47, 53 49 C 53 50, 52 51, 50 51 L 46 51 C 46 48, 43 46, 40 46 C 37 46, 34 48, 34 51 L 28 51 C 28 48, 25 46, 22 46 C 19 46, 16 48, 16 51 L 15 51 C 14 51, 13 50, 13 49 C 13 47, 14 46, 16 46 Z" 
+        stroke="#0F172A" stroke-width="2" fill="none" class="car-body" stroke-linejoin="round" />
+  <!-- Wheels -->
+  <circle cx="22" cy="50" r="3.5" stroke="#0F172A" stroke-width="1.8" fill="#FFFFFF" class="car-body" />
+  <circle cx="40" cy="50" r="3.5" stroke="#0F172A" stroke-width="1.8" fill="#FFFFFF" class="car-body" />
+  <!-- Window divider -->
+  <path d="M 33 37 L 33 44" stroke="#0F172A" stroke-width="1.5" class="car-body" />
+</svg>
