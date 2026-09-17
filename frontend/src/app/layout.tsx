@@ -23,13 +23,22 @@ export default function RootLayout({
           <Navbar />
           <main>{children}</main>
         </div>
-        <footer className="border-t border-slate-200 bg-white py-8 text-center text-xs text-slate-500">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <p className="font-semibold text-slate-700">CocheraVecina México</p>
-            <p className="mt-1">
+        <footer className="border-t border-slate-200/80 bg-white py-10 text-center text-xs text-slate-500">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+            <div className="flex items-center gap-2 mb-2">
+              <img src="/logo-mark-192.png" alt="CocheraVecina" className="h-6 w-6 object-contain" />
+              <span className="font-extrabold text-slate-900 text-sm">
+                Cochera<span className="text-blue-600">Vecina</span>
+              </span>
+              <span className="rounded-full bg-blue-50 px-1.5 py-0.5 text-[9px] font-bold text-blue-600 border border-blue-200/50">
+                MX
+              </span>
+            </div>
+            <p className="max-w-md text-slate-600 leading-relaxed">
               La alternativa confiable a los estacionamientos caros de aeropuertos y centrales de autobús.
+              Renta cocheras techadas de 2 a 15 días con anfitriones verificados.
             </p>
-            <p className="mt-3 text-slate-400">
+            <p className="mt-4 text-slate-400">
               © {new Date().getFullYear()} CocheraVecina. Todos los derechos reservados.
             </p>
           </div>
