@@ -32,8 +32,9 @@ class SpotBase(BaseModel):
     latitude: float = Field(..., ge=-90.0, le=90.0)
     longitude: float = Field(..., ge=-180.0, le=180.0)
     price_per_day: int = Field(..., gt=0, description="Price per day in centavos MXN (e.g., 15000 = $150.00 MXN)")
-    vehicle_size: str = Field(..., pattern="^(compact|sedan|suv|truck)$")
-    space_type: str = Field(..., pattern="^(covered|uncovered)$")
+    price_per_hour: Optional[int] = Field(None, gt=0, description="Optional price per hour in centavos MXN")
+    vehicle_size: str = Field(..., pattern="^(moto|compact|sedan|suv|truck)$")
+    space_type: str = Field(..., pattern="^(covered|uncovered|pension)$")
     access_instructions: Optional[str] = None
 
 
@@ -45,8 +46,9 @@ class SpotUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=5, max_length=200)
     description: Optional[str] = Field(None, min_length=10)
     price_per_day: Optional[int] = Field(None, gt=0)
-    vehicle_size: Optional[str] = Field(None, pattern="^(compact|sedan|suv|truck)$")
-    space_type: Optional[str] = Field(None, pattern="^(covered|uncovered)$")
+    price_per_hour: Optional[int] = Field(None, gt=0)
+    vehicle_size: Optional[str] = Field(None, pattern="^(moto|compact|sedan|suv|truck)$")
+    space_type: Optional[str] = Field(None, pattern="^(covered|uncovered|pension)$")
     access_instructions: Optional[str] = None
     is_active: Optional[bool] = None
 

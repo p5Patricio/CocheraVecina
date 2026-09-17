@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   CheckCircle2,
   Car,
+  Clock,
   ArrowRight,
 } from "lucide-react";
 import CitySelector from "@/components/CitySelector";
@@ -50,12 +51,10 @@ export default function HomePage() {
             </div>
 
             <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-              Tu auto seguro mientras viajas.
+              Estacionamiento y cocheras seguras por horas o días.
             </h1>
             <p className="mt-4 text-base leading-relaxed text-slate-600 sm:text-lg">
-              Renta cocheras privadas techadas de anfitriones verificados para estancias cortas o extendidas.
-              Tú eliges las fechas que necesitas según la disponibilidad de cada cochera. Olvídate
-              de tarifas infladas en estacionamientos de aeropuertos y viaja con total tranquilidad.
+              Renta cocheras privadas, pensiones o cajones seguros para tu auto, moto, camioneta o pickup. Estancias cortas o extendidas con acceso coordinado y tarifas directas del anfitrión.
             </p>
           </div>
 
@@ -124,9 +123,10 @@ export default function HomePage() {
                     onChange={(e) => setVehicleSize(e.target.value)}
                     className="w-full bg-transparent text-sm font-semibold text-slate-900 focus:outline-none cursor-pointer pr-3"
                   >
-                    <option value="compact">Compacto</option>
+                    <option value="moto">Moto / Cuatrimoto</option>
+                    <option value="compact">Auto compacto</option>
                     <option value="sedan">Sedán</option>
-                    <option value="suv">SUV / Camioneta</option>
+                    <option value="suv">Camioneta / SUV</option>
                     <option value="truck">Pickup / Grande</option>
                   </select>
                 </div>
@@ -146,14 +146,18 @@ export default function HomePage() {
           </div>
 
           {/* Trust Badges Row */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-semibold text-slate-600">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-xs font-semibold text-slate-600">
             <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-blue-600" />
-              <span>Estancias y fechas flexibles</span>
+              <Clock className="h-4 w-4 text-blue-600" />
+              <span>Por horas o por días</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Car className="h-4 w-4 text-blue-600" />
+              <span>Motos, autos y camionetas</span>
             </div>
             <div className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4 text-blue-600" />
-              <span>Anfitriones verificados</span>
+              <span>Cocheras techadas, al aire libre y pensiones</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-600" />
@@ -185,11 +189,10 @@ export default function HomePage() {
                 1
               </div>
               <h3 className="mt-4 text-base font-bold text-slate-900">
-                Encuentra tu cochera
+                Encuentra tu cochera o pensión
               </h3>
               <p className="mt-2 text-sm text-slate-600 leading-relaxed">
-                Ingresa las fechas de tu viaje y el tipo de vehículo. Filtra espacios
-                techados con portón eléctrico cerca de tu punto de partida o aeropuerto, con disponibilidad definida por cada anfitrión.
+                Ingresa tus fechas y elige si necesitas resguardo por horas o por días. Filtra cocheras en casa, espacios al aire libre, pensiones o estacionamientos particulares para tu moto, auto compacto, sedán o camioneta.
               </p>
             </div>
 
@@ -213,11 +216,10 @@ export default function HomePage() {
                 3
               </div>
               <h3 className="mt-4 text-base font-bold text-slate-900">
-                Deja tu auto protegido
+                Deja tu vehículo protegido
               </h3>
               <p className="mt-2 text-sm text-slate-600 leading-relaxed">
-                Llega al domicilio verificado, guarda tu auto bajo llave y toma tu traslado al aeropuerto.
-                Viaja tranquilo sabiendo que tu patrimonio está resguardado.
+                Llega al domicilio verificado, guarda tu moto, auto o camioneta con acceso coordinado y viaja con total tranquilidad sabiendo que tu patrimonio está resguardado.
               </p>
             </div>
           </div>
@@ -255,7 +257,7 @@ export default function HomePage() {
           </h2>
 
           <p className="mt-4 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed text-slate-600">
-            El símbolo de CocheraVecina une la silueta del vehículo con un arco de resguardo continuo: la arquitectura de una cochera privada techada y la protección cercana de una comunidad de vecinos y anfitriones verificados.
+            El símbolo de CocheraVecina une la silueta vehicular con un arco de resguardo continuo: protección dedicada para todo tipo de vehículos —motos, cuatrimotos, autos y camionetas— bajo el amparo de cocheras privadas, pensiones y lotes seguros con anfitriones verificados.
           </p>
 
           {/* 3 Pillars of the Brand Symbol */}
@@ -266,7 +268,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-base font-bold text-slate-900">Arco de Resguardo</h3>
               <p className="mt-2 text-sm text-slate-600 leading-relaxed">
-                Cada espacio ofrece resguardo techado o portón seguro que protege tu vehículo del clima, la intemperie y cualquier riesgo de la vía pública.
+                Protección integral para motos, autos y camionetas en cocheras techadas, al aire libre o pensiones privadas contra el clima y riesgos de la vía pública.
               </p>
             </div>
 
@@ -286,7 +288,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-base font-bold text-slate-900">Paz Mental en tu Viaje</h3>
               <p className="mt-2 text-sm text-slate-600 leading-relaxed">
-                Sin maniobras masivas ni riesgos de estacionamientos abiertos. Sabes exactamente dónde descansa tu coche hasta tu regreso.
+                Sin maniobras masivas ni riesgos de estacionamientos abiertos. Sabes exactamente dónde descansa tu vehículo hasta tu regreso.
               </p>
             </div>
           </div>
@@ -303,11 +305,10 @@ export default function HomePage() {
                 <span>Monetiza tu espacio sin complicaciones</span>
               </div>
               <h2 className="text-3xl font-extrabold tracking-tight">
-                ¿Tienes una cochera techada libre en casa?
+                ¿Tienes una cochera, pensión o espacio disponible?
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-slate-300">
-                Conviértela en ingresos recibiendo autos de viajeros en estancias cortas o prolongadas.
-                Tú defines tu propia disponibilidad y tarifas, y los cobros van directo a tu cuenta bancaria vía Stripe Connect.
+                Monetiza cualquier espacio: cochera en casa, espacio al aire libre, pensión vehicular o estacionamiento particular. Recibe motos, autos o camionetas por horas o por días con tus propias tarifas y cobros directos vía Stripe Connect.
               </p>
             </div>
             <button

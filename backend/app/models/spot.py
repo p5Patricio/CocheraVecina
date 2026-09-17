@@ -36,10 +36,11 @@ class ParkingSpot(Base):
 
     # Pricing (in centavos MXN: $150 MXN = 15000)
     price_per_day: Mapped[int] = mapped_column(Integer, nullable=False)
+    price_per_hour: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
 
     # Vehicle and Space attributes
-    vehicle_size: Mapped[str] = mapped_column(String(20), nullable=False)  # "compact", "sedan", "suv", "truck"
-    space_type: Mapped[str] = mapped_column(String(20), nullable=False)    # "covered", "uncovered"
+    vehicle_size: Mapped[str] = mapped_column(String(20), nullable=False)  # "moto", "compact", "sedan", "suv", "truck"
+    space_type: Mapped[str] = mapped_column(String(20), nullable=False)    # "covered", "uncovered", "pension"
     access_instructions: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)

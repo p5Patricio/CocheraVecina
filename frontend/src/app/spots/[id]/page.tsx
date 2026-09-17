@@ -153,13 +153,19 @@ export default function SpotDetailPage() {
             {/* Floating Badges */}
             <div className="absolute top-4 left-4 flex items-center gap-2">
               <span className="rounded-full bg-slate-950/75 px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
-                {spot.space_type === "covered" ? "Techado" : "Al aire libre"}
+                {spot.space_type === "covered"
+                  ? "Techado"
+                  : spot.space_type === "pension"
+                  ? "Pensión / Privado"
+                  : "Al aire libre"}
               </span>
             </div>
 
             <div className="absolute top-4 right-4">
               <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-bold text-white shadow-sm">
-                Hasta {spot.vehicle_size.toUpperCase()}
+                {spot.vehicle_size === "moto"
+                  ? "Moto / Cuatrimoto"
+                  : `Hasta ${spot.vehicle_size.toUpperCase()}`}
               </span>
             </div>
           </div>
@@ -244,7 +250,11 @@ export default function SpotDetailPage() {
                   </div>
                   <span className="text-[11px] font-bold text-slate-500 uppercase">Protección</span>
                   <p className="text-xs font-bold text-slate-900 mt-0.5">
-                    {spot.space_type === "covered" ? "Techado privado" : "Al aire libre"}
+                    {spot.space_type === "covered"
+                      ? "Techado privado"
+                      : spot.space_type === "pension"
+                      ? "Pensión / Privado"
+                      : "Al aire libre"}
                   </p>
                 </div>
 
@@ -254,7 +264,9 @@ export default function SpotDetailPage() {
                   </div>
                   <span className="text-[11px] font-bold text-slate-500 uppercase">Capacidad</span>
                   <p className="text-xs font-bold text-slate-900 mt-0.5">
-                    Hasta {spot.vehicle_size.toUpperCase()}
+                    {spot.vehicle_size === "moto"
+                      ? "Moto / Cuatrimoto"
+                      : `Hasta ${spot.vehicle_size.toUpperCase()}`}
                   </p>
                 </div>
 
@@ -341,6 +353,11 @@ export default function SpotDetailPage() {
                   ${(spot.price_per_day / 100).toFixed(0)} MXN
                 </span>
                 <span className="text-xs text-slate-500 font-medium"> / día</span>
+                {spot.price_per_hour ? (
+                  <span className="block text-xs text-slate-500 font-medium mt-0.5">
+                    o ${(spot.price_per_hour / 100).toFixed(0)} MXN / hora
+                  </span>
+                ) : null}
               </div>
               <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-bold text-blue-600 border border-blue-200/50">
                 Fechas flexibles

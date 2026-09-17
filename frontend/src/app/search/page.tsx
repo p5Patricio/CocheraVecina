@@ -94,9 +94,10 @@ function SearchContent() {
               </span>
               {[
                 { label: "Todos", value: "" },
+                { label: "Moto/Cuatrimoto", value: "moto" },
                 { label: "Compacto", value: "compact" },
                 { label: "Sedán", value: "sedan" },
-                { label: "SUV", value: "suv" },
+                { label: "Camioneta/SUV", value: "suv" },
                 { label: "Pickup", value: "truck" },
               ].map((opt) => {
                 const isActive = vehicleSize === opt.value;
@@ -123,9 +124,10 @@ function SearchContent() {
                 Espacio:
               </span>
               {[
-                { label: "Cualquiera", value: "" },
+                { label: "Todos", value: "" },
                 { label: "Techado", value: "covered" },
                 { label: "Al aire libre", value: "uncovered" },
+                { label: "Pensión / Privado", value: "pension" },
               ].map((opt) => {
                 const isActive = spaceType === opt.value;
                 return (
@@ -221,13 +223,19 @@ function SearchContent() {
                 {/* Floating Backdrop-Blur Badges (DESIGN.md Section 4.3) */}
                 <div className="absolute left-3 top-3 flex items-center gap-1.5">
                   <span className="rounded-full bg-slate-950/75 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-md">
-                    {spot.space_type === "covered" ? "Techado" : "Al aire libre"}
+                    {spot.space_type === "covered"
+                      ? "Techado"
+                      : spot.space_type === "pension"
+                      ? "Pensión / Privado"
+                      : "Al aire libre"}
                   </span>
                 </div>
 
                 <div className="absolute right-3 top-3">
                   <span className="rounded-full bg-blue-600 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm">
-                    Hasta {spot.vehicle_size.toUpperCase()}
+                    {spot.vehicle_size === "moto"
+                      ? "Moto / Cuatrimoto"
+                      : `Hasta ${spot.vehicle_size.toUpperCase()}`}
                   </span>
                 </div>
               </div>
@@ -281,6 +289,11 @@ function SearchContent() {
                       ${(spot.price_per_day / 100).toFixed(0)} MXN
                     </span>
                     <span className="text-xs text-slate-500 font-medium"> / día</span>
+                    {spot.price_per_hour ? (
+                      <span className="block text-[11px] text-slate-500 font-medium">
+                        o ${(spot.price_per_hour / 100).toFixed(0)} MXN / hora
+                      </span>
+                    ) : null}
                   </div>
 
                   <span className="rounded-lg bg-blue-600 px-3.5 py-1.5 text-xs font-bold text-white transition-colors group-hover:bg-blue-700">

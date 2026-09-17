@@ -38,8 +38,9 @@ export interface ParkingSpot {
   latitude: number;
   longitude: number;
   price_per_day: number; // in centavos
-  vehicle_size: string;
-  space_type: string;
+  price_per_hour?: number; // in centavos
+  vehicle_size: string; // includes moto, compact, sedan, suv, truck
+  space_type: string; // includes covered, uncovered, pension
   access_instructions?: string;
   is_active: boolean;
   images: SpotImage[];

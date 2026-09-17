@@ -44,6 +44,7 @@ function DashboardContent() {
   const [newSpotState, setNewSpotState] = useState("Guanajuato");
   const [newSpotPostalCode, setNewSpotPostalCode] = useState("37000");
   const [newSpotPrice, setNewSpotPrice] = useState("150");
+  const [newSpotPricePerHour, setNewSpotPricePerHour] = useState("");
   const [newSpotSize, setNewSpotSize] = useState("sedan");
   const [newSpotType, setNewSpotType] = useState("covered");
   const [newSpotPhoto, setNewSpotPhoto] = useState<File | null>(null);
@@ -147,7 +148,7 @@ function DashboardContent() {
     if (!token) return;
     setNewSpotLoading(true);
     try {
-      const createdSpot = await api.spots.create(token, {
+      const payload: any = {
         title: newSpotTitle,
         description: newSpotDesc,
         address_line: newSpotAddress,
@@ -160,7 +161,13 @@ function DashboardContent() {
         price_per_day: Math.round(parseFloat(newSpotPrice) * 100),
         vehicle_size: newSpotSize,
         space_type: newSpotType,
-      });
+      };
+
+      if (newSpotPricePerHour && !isNaN(parseFloat(newSpotPricePerHour))) {
+        payload.price_per_hour = Math.round(parseFloat(newSpotPricePerHour) * 100);
+      }
+
+      const createdSpot = await api.spots.create(token, payload);
 
       if (newSpotPhoto && createdSpot && createdSpot.id) {
         try {
@@ -171,6 +178,7 @@ function DashboardContent() {
       }
 
       setIsNewSpotOpen(false);
+      setNewSpotPricePerHour("");
       setNewSpotPhoto(null);
       setPhotoPreview(null);
       await loadData(token);
@@ -537,7 +545,11 @@ function DashboardContent() {
                       {/* Space type badge */}
                       <div className="absolute top-3 left-3">
                         <span className="rounded-full bg-slate-950/75 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-md">
-                          {s.space_type === "covered" ? "Techado" : "Al aire libre"}
+                          {s.space_type === "covered"
+                            ? "Techado"
+                            : s.space_type === "pension"
+                            ? "Pensión / Privado"
+                            : "Al aire libre"}
                         </span>
                       </div>
                     </div>
@@ -547,11 +559,18 @@ function DashboardContent() {
                         <h3 className="font-bold text-sm text-slate-900 line-clamp-1">{s.title}</h3>
                         <p className="text-xs text-slate-500 mt-1">{s.address_line}, {s.city}</p>
                         <div className="mt-3 flex justify-between items-center text-xs">
-                          <span className="font-extrabold text-slate-900">
-                            ${(s.price_per_day / 100).toFixed(0)} MXN <span className="font-normal text-slate-500">/ día</span>
-                          </span>
+                          <div>
+                            <span className="font-extrabold text-slate-900">
+                              ${(s.price_per_day / 100).toFixed(0)} MXN <span className="font-normal text-slate-500">/ día</span>
+                            </span>
+                            {s.price_per_hour ? (
+                              <span className="block text-[10px] text-slate-500 font-medium">
+                                ${(s.price_per_hour / 100).toFixed(0)} MXN / hr
+                              </span>
+                            ) : null}
+                          </div>
                           <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold text-blue-700 border border-blue-200/50">
-                            Hasta {s.vehicle_size.toUpperCase()}
+                            {s.vehicle_size === "moto" ? "Moto / Cuatrimoto" : `Hasta ${s.vehicle_size.toUpperCase()}`}
                           </span>
                         </div>
                       </div>
@@ -582,8 +601,10 @@ function DashboardContent() {
       {isNewSpotOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
           <div className="relative w-full max-w-lg rounded-2xl bg-white p-6 sm:p-7 shadow-2xl max-h-[90vh] overflow-y-auto border border-slate-200">
-            <h2 className="text-xl font-extrabold tracking-tight text-slate-900">Publicar Nueva Cochera</h2>
-            <p className="text-xs text-slate-500 mt-1">Completa los datos de tu espacio para empezar a recibir autos de viajeros.</p>
+            <h2 className="text-xl font-extrabold tracking-tight text-slate-900">Publicar Nueva Cochera o Pensión</h2>
+            <p className="text-xs text-slate-500 mt-1">
+              Publica cualquier espacio seguro: cochera en casa techada o al aire libre, pensión vehicular, lote privado o estacionamiento particular. Recibe motos, autos o camionetas por horas o por días.
+            </p>
 
             <form onSubmit={handleCreateSpot} className="mt-6 space-y-4">
               <div>
@@ -595,7 +616,7 @@ function DashboardContent() {
                   required
                   value={newSpotTitle}
                   onChange={(e) => setNewSpotTitle(e.target.value)}
-                  placeholder="Ej. Cochera techada con portón eléctrico cerca de Poliforum"
+                  placeholder="Ej. Cochera techada con portón eléctrico cerca de Poliforum o Pensión segura"
                   className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs font-semibold text-slate-900 focus:border-blue-600 focus:bg-white focus:outline-none"
                 />
               </div>
@@ -609,7 +630,7 @@ function DashboardContent() {
                   rows={3}
                   value={newSpotDesc}
                   onChange={(e) => setNewSpotDesc(e.target.value)}
-                  placeholder="Detalla tipo de piso, portón eléctrico, seguridad vecinal, cámaras o referencias..."
+                  placeholder="Detalla si es cochera particular, pensión o lote cerrado, tipo de acceso, portón eléctrico, vigilancia, referencias..."
                   className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs font-semibold text-slate-900 focus:border-blue-600 focus:bg-white focus:outline-none"
                 />
               </div>
@@ -642,37 +663,54 @@ function DashboardContent() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                    Tarifa / día ($ MXN)
+                    Tarifa / día ($ MXN) *
                   </label>
                   <input
                     type="number"
                     required
                     value={newSpotPrice}
                     onChange={(e) => setNewSpotPrice(e.target.value)}
+                    placeholder="150"
                     className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs font-semibold text-slate-900 focus:border-blue-600 focus:bg-white focus:outline-none"
                   />
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                    Vehículo máximo
+                    Tarifa / hora ($ MXN) <span className="normal-case font-normal text-slate-400">(Opcional)</span>
+                  </label>
+                  <input
+                    type="number"
+                    value={newSpotPricePerHour}
+                    onChange={(e) => setNewSpotPricePerHour(e.target.value)}
+                    placeholder="Ej. 25"
+                    className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs font-semibold text-slate-900 focus:border-blue-600 focus:bg-white focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    Vehículo admitido
                   </label>
                   <select
                     value={newSpotSize}
                     onChange={(e) => setNewSpotSize(e.target.value)}
                     className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-2.5 py-2 text-xs font-semibold text-slate-900 focus:border-blue-600 focus:bg-white focus:outline-none cursor-pointer"
                   >
-                    <option value="compact">Compacto</option>
+                    <option value="moto">Moto / Cuatrimoto</option>
+                    <option value="compact">Auto compacto</option>
                     <option value="sedan">Sedán</option>
-                    <option value="suv">SUV</option>
-                    <option value="truck">Pickup</option>
+                    <option value="suv">Camioneta / SUV</option>
+                    <option value="truck">Pickup / Grande</option>
                   </select>
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                    Tipo espacio
+                    Tipo de espacio
                   </label>
                   <select
                     value={newSpotType}
@@ -681,13 +719,14 @@ function DashboardContent() {
                   >
                     <option value="covered">Techado</option>
                     <option value="uncovered">Al aire libre</option>
+                    <option value="pension">Pensión / Lote privado</option>
                   </select>
                 </div>
               </div>
 
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                  Foto de tu cochera (Opcional)
+                  Foto de tu cochera o espacio (Opcional)
                 </label>
                 <p className="text-[11px] text-slate-500 mb-2">Se optimizará a formato WebP ultraligero y seguro.</p>
                 <div className="flex items-center gap-3">

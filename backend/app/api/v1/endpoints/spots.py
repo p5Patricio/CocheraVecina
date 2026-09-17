@@ -20,8 +20,8 @@ async def search_spots(
     city: Optional[str] = Query(None, description="City name (e.g. León)"),
     start_date: Optional[date] = Query(None, description="Check-in date"),
     end_date: Optional[date] = Query(None, description="Check-out date"),
-    vehicle_size: Optional[str] = Query(None, description="compact, sedan, suv, truck"),
-    space_type: Optional[str] = Query(None, description="covered, uncovered"),
+    vehicle_size: Optional[str] = Query(None, description="moto, compact, sedan, suv, truck"),
+    space_type: Optional[str] = Query(None, description="covered, uncovered, pension"),
     max_price: Optional[int] = Query(None, description="Max price per day in centavos"),
     session: AsyncSession = Depends(get_db),
 ):
