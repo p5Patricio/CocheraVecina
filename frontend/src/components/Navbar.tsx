@@ -41,10 +41,10 @@ export default function Navbar() {
             <img
               src="/logo-mark-192.png"
               alt="CocheraVecina"
-              className="h-8 w-8 object-contain transition-transform duration-150 group-hover:scale-105"
+              className="h-10 w-10 sm:h-11 sm:w-11 object-contain transition-transform duration-150 group-hover:scale-105"
             />
             <div className="flex items-center gap-1.5">
-              <span className="text-lg font-extrabold tracking-tight text-slate-900">
+              <span className="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900">
                 Cochera<span className="text-blue-600">Vecina</span>
               </span>
               <span className="rounded-full bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-600 border border-blue-200/60">

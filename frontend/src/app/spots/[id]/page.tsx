@@ -274,7 +274,7 @@ export default function SpotDetailPage() {
                   </div>
                   <span className="text-[11px] font-bold text-slate-500 uppercase">Estancia</span>
                   <p className="text-xs font-bold text-slate-900 mt-0.5">
-                    2 a 15 días
+                    Fechas flexibles
                   </p>
                 </div>
               </div>
@@ -343,7 +343,7 @@ export default function SpotDetailPage() {
                 <span className="text-xs text-slate-500 font-medium"> / día</span>
               </div>
               <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-bold text-blue-600 border border-blue-200/50">
-                Estancia 2–15 días
+                Fechas flexibles
               </span>
             </div>
 

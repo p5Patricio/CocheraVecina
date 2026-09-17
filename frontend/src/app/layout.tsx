@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "CocheraVecina — Renta de cocheras seguras para viajeros en México",
   description:
-    "El marketplace entre particulares para dejar tu auto seguro durante tus viajes de 2 a 15 días. Más económico y seguro que estacionamientos de aeropuertos.",
+    "El marketplace entre particulares para dejar tu auto seguro durante tus viajes con fechas flexibles. Más económico y seguro que estacionamientos de aeropuertos.",
 };
 
 export default function RootLayout({
@@ -36,7 +36,7 @@ export default function RootLayout({
             </div>
             <p className="max-w-md text-slate-600 leading-relaxed">
               La alternativa confiable a los estacionamientos caros de aeropuertos y centrales de autobús.
-              Renta cocheras techadas de 2 a 15 días con anfitriones verificados.
+              Renta cocheras techadas con anfitriones verificados y fechas según tu itinerario.
             </p>
             <p className="mt-4 text-slate-400">
               © {new Date().getFullYear()} CocheraVecina. Todos los derechos reservados.

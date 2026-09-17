@@ -324,7 +324,7 @@ function DashboardContent() {
           <div>
             <h2 className="text-xl font-extrabold tracking-tight text-slate-900">Tus reservas de cochera</h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Espacios reservados para dejar tu auto seguro durante tus viajes de 2 a 15 días.
+              Espacios reservados para dejar tu auto seguro durante tus viajes.
             </p>
           </div>
 
