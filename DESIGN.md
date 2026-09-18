@@ -8,7 +8,7 @@
 
 ## 1. Design Philosophy & Aesthetic Core
 
-CocheraVecina is a peer-to-peer short-stay parking marketplace (2–15 days) connecting travelers with trusted Mexican hosts in residential areas.
+CocheraVecina is a peer-to-peer parking and vehicle boarding marketplace connecting drivers and travelers with trusted hosts across Mexico for hourly, daily, or extended stays.
 
 - **Trust Over Flash**: Security and predictability reign supreme. Users trust us with their vehicles while traveling.
 - **Photography & Clarity First**: Authentic photographs of garages, electric gates, and surveillance take precedence over abstract decorative graphics.
@@ -80,20 +80,24 @@ The system relies on modern, geometric, high-legibility sans-serif typography.
 ### 4.2 Floating Search Widget (Airbnb-Style Pill)
 - **Geometry**: Compact rounded pill on mobile (`rounded-2xl`), unified segmented bar on desktop (`rounded-full shadow-lg shadow-slate-900/5 border border-slate-200/80 bg-white`).
 - **Interaction**:
-  - Divided into 3 explicit zones: **Destino / Zona** (e.g., León, Bajío), **Fechas** (Check-in & Check-out range), **Vehículo** (Compacto, Sedán, SUV, Pickup).
-  - Hover states apply soft gray highlights (`bg-slate-100/70`).
-  - Search trigger is a solid Cobalt button (`bg-blue-600 hover:bg-blue-700 text-white rounded-full p-3 sm:px-6`).
+  - Divided into 4 explicit zones:
+    1. **Destino / Ciudad**: Combobox with accent-insensitive search covering all 32 Mexican states, metro areas, and airport hubs.
+    2. **Llegada**: Date selector with separate compartment preventing native calendar icon collision.
+    3. **Salida**: Departure date selector.
+    4. **Vehículo**: Dropdown supporting Moto / Cuatrimoto (`moto`), Auto compacto (`compact`), Sedán (`sedan`), Camioneta / SUV (`suv`), and Pickup / Grande (`truck`).
+  - Hover states apply soft gray highlights (`bg-slate-50/80`).
+  - Search trigger is a solid Cobalt button (`bg-blue-600 hover:bg-blue-700 text-white rounded-2xl px-7 py-3.5`).
 
 ### 4.3 Spot Listing Card
 - **Aspect Ratio**: Photo container fixed at `16:10` or `4:3` with `rounded-2xl overflow-hidden border border-slate-200/60 bg-slate-100`.
 - **Photo Polish**: Next.js optimized WebP rendering via `getMediaUrl` with subtle zoom hover effect (`group-hover:scale-105 transition-transform duration-300 ease-out`).
 - **Badge Overlay**: Floating top-left/bottom-left pills with backdrop blur:
-  - Space Type: `"Techado"` (Dark backdrop `bg-slate-950/75 text-white`) or `"Al aire libre"`.
-  - Max Vehicle: `"Hasta SUV"` or `"Sedán"` (`bg-blue-600 text-white font-bold`).
+  - Space Type: `"Techado"`, `"Al aire libre"`, or `"Pensión"`.
+  - Max Vehicle: `"Hasta SUV"`, `"Sedán"`, `"Moto"`, etc. (`bg-blue-600 text-white font-bold`).
 - **Content Hierarchy**:
   - Row 1: City + Neighborhood in bold small caps.
   - Row 2: Spot title (truncate 1 line, font-bold).
-  - Row 3: Price in Mexican Pesos: **`$180 MXN`** `/ día` (`text-base font-extrabold text-slate-900`).
+  - Row 3: Price in Mexican Pesos: **`$180 MXN`** `/ día` or **`$25 MXN`** `/ hora` (`text-base font-extrabold text-slate-900`).
 
 ### 4.4 Booking & Quote Card (Stripe / Airbnb Hybrid)
 - Sticky desktop sidebar widget (`sticky top-24 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm`).
