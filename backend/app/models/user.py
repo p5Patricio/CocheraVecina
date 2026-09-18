@@ -32,12 +32,16 @@ class User(Base):
     stripe_account_id: Mapped[Optional[str]] = mapped_column(String(100), index=True, nullable=True)
     stripe_customer_id: Mapped[Optional[str]] = mapped_column(String(100), index=True, nullable=True)
 
-    # Identity Verification
+    # Identity & Email Verification
     identity_status: Mapped[str] = mapped_column(
         String(20),
         default="unverified",
         nullable=False
     )  # "unverified", "pending", "verified"
+    verification_code: Mapped[Optional[str]] = mapped_column(String(6), nullable=True)
+    verification_code_expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    email_verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 

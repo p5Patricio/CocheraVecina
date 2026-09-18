@@ -21,6 +21,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import AuthModal from "@/components/AuthModal";
+import OtpVerificationModal from "@/components/OtpVerificationModal";
+import { User } from "@/lib/api";
 import Link from "next/link";
 
 export default function SpotDetailPage() {
@@ -39,6 +41,8 @@ export default function SpotDetailPage() {
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isOtpOpen, setIsOtpOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
     if (spotId) {
@@ -75,6 +79,19 @@ export default function SpotDetailPage() {
   const handleBooking = async () => {
     const token = localStorage.getItem("cochera_token");
     if (!token) {
+      setIsAuthOpen(true);
+      return;
+    }
+
+    // Verify user account is verified before booking
+    try {
+      const user = await api.auth.me(token);
+      setCurrentUser(user);
+      if (user.is_verified === false) {
+        setIsOtpOpen(true);
+        return;
+      }
+    } catch {
       setIsAuthOpen(true);
       return;
     }
@@ -478,6 +495,18 @@ export default function SpotDetailPage() {
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
         onSuccess={() => setIsAuthOpen(false)}
+      />
+
+      <OtpVerificationModal
+        isOpen={isOtpOpen}
+        email={currentUser?.email || ""}
+        onClose={() => setIsOtpOpen(false)}
+        onSuccess={(verifiedUser) => {
+          setCurrentUser(verifiedUser);
+          setIsOtpOpen(false);
+          // Retry booking automatically now that user is verified
+          handleBooking();
+        }}
       />
     </div>
   );

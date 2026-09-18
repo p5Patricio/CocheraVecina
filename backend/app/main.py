@@ -21,6 +21,18 @@ async def lifespan(app: FastAPI):
     # Initialize tables if SQLite or development mode
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        # Ensure verification columns exist in production PostgreSQL
+        from sqlalchemy import text
+        for col_name, col_sql in [
+            ("verification_code", "VARCHAR(6)"),
+            ("verification_code_expires_at", "TIMESTAMP WITH TIME ZONE"),
+            ("email_verified_at", "TIMESTAMP WITH TIME ZONE"),
+            ("is_verified", "BOOLEAN NOT NULL DEFAULT FALSE"),
+        ]:
+            try:
+                await conn.execute(text(f"ALTER TABLE users ADD COLUMN IF NOT EXISTS {col_name} {col_sql};"))
+            except Exception:
+                pass
 
     yield
 

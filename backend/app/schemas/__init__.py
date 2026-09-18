@@ -1,4 +1,15 @@
-from app.schemas.user import UserBase, UserCreate, UserLogin, UserUpdate, UserOut, Token, TokenPayload
+from app.schemas.user import (
+    UserBase,
+    UserCreate,
+    UserLogin,
+    UserUpdate,
+    UserOut,
+    Token,
+    TokenPayload,
+    VerifyCodeRequest,
+    ResendCodeRequest,
+    VerifyCodeResponse,
+)
 from app.schemas.spot import SpotImageCreate, SpotImageOut, SpotBase, SpotCreate, SpotUpdate, SpotOut, SpotSearchFilter
 from app.schemas.booking import (
     BookingQuoteRequest,
@@ -19,6 +30,9 @@ __all__ = [
     "UserOut",
     "Token",
     "TokenPayload",
+    "VerifyCodeRequest",
+    "ResendCodeRequest",
+    "VerifyCodeResponse",
     "SpotImageCreate",
     "SpotImageOut",
     "SpotBase",

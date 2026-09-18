@@ -17,8 +17,10 @@ import {
   AlertCircle,
   Camera,
   Image as ImageIcon,
+  Mail,
 } from "lucide-react";
 import AuthModal from "@/components/AuthModal";
+import OtpVerificationModal from "@/components/OtpVerificationModal";
 
 function DashboardContent() {
   const searchParams = useSearchParams();
@@ -28,6 +30,7 @@ function DashboardContent() {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isOtpOpen, setIsOtpOpen] = useState(false);
 
   // Guest State
   const [guestBookings, setGuestBookings] = useState<Booking[]>([]);
@@ -281,6 +284,17 @@ function DashboardContent() {
                   <ShieldCheck className="h-3.5 w-3.5" />
                   {user.identity_status === "verified" ? "Identidad Verificada" : "Identidad Pendiente"}
                 </span>
+
+                <span
+                  className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold border ${
+                    user.is_verified
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      : "bg-amber-50 text-amber-700 border-amber-200"
+                  }`}
+                >
+                  <Mail className="h-3.5 w-3.5" />
+                  {user.is_verified ? "Email Verificado" : "Email Sin Verificar"}
+                </span>
               </div>
               <p className="text-xs text-slate-500 mt-1">{user.email}</p>
             </div>
@@ -299,6 +313,27 @@ function DashboardContent() {
               />
             </label>
           </div>
+        </div>
+      )}
+
+      {/* Unverified Email Warning Banner */}
+      {user && !user.is_verified && (
+        <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-amber-200 bg-amber-50/70 p-4 text-amber-900 shadow-sm">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="h-5 w-5 text-amber-600 shrink-0" />
+            <div>
+              <p className="text-xs font-bold text-amber-950">Tu correo electrónico no ha sido verificado</p>
+              <p className="text-xs text-amber-800">
+                Verifica tu correo con el código de 6 dígitos para proteger tu cuenta y poder solicitar o confirmar reservas de cocheras.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setIsOtpOpen(true)}
+            className="shrink-0 rounded-xl bg-amber-600 px-4 py-2 text-xs font-bold text-white hover:bg-amber-700 transition-colors shadow-sm"
+          >
+            Verificar mi correo
+          </button>
         </div>
       )}
 
@@ -777,6 +812,18 @@ function DashboardContent() {
           </div>
         </div>
       )}
+
+      {/* Otp Verification Modal */}
+      <OtpVerificationModal
+        isOpen={isOtpOpen}
+        email={user?.email || ""}
+        token={token || ""}
+        onClose={() => setIsOtpOpen(false)}
+        onSuccess={(verifiedUser) => {
+          setUser(verifiedUser);
+          setIsOtpOpen(false);
+        }}
+      />
     </div>
   );
 }

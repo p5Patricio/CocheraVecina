@@ -17,6 +17,8 @@ export interface User {
   avatar_url?: string;
   stripe_account_id?: string;
   identity_status: string;
+  is_verified?: boolean;
+  email_verified_at?: string;
 }
 
 export interface SpotImage {
@@ -120,6 +122,18 @@ export const api = {
     me: (token: string) =>
       request<User>("/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
+      }),
+    verifyEmailCode: (token: string, code: string, email?: string) =>
+      request<User>("/auth/verify-code", {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: JSON.stringify({ code, email }),
+      }),
+    resendEmailCode: (token: string, email?: string) =>
+      request<{ message: string }>("/auth/resend-code", {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: JSON.stringify({ email }),
       }),
     uploadAvatar: async (token: string, file: File) => {
       const formData = new FormData();

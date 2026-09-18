@@ -32,6 +32,10 @@ class Settings(BaseSettings):
     GUEST_SERVICE_FEE_PERCENTAGE: float = 0.10
     HOST_SERVICE_FEE_PERCENTAGE: float = 0.05
 
+    # Resend & Email
+    RESEND_API_KEY: str = ""
+    EMAIL_FROM: str = "verificacion@patodev.com"
+
     # CORS
     FRONTEND_URL: str = "https://cocheravecina.patodev.com"
     BACKEND_CORS_ORIGINS: Union[str, List[str]] = [

@@ -199,16 +199,15 @@ Our design system is fully documented in [`DESIGN.md`](file:///c:/Users/Usuario/
 - [x] Scope expansion: Hourly & daily rates, moto/quad/car/truck support, covered/uncovered/pensión space types.
 - [x] Production deployment on Contabo VPS with SSL via Coolify.
 - [x] 100/100 SEO overhaul with OpenGraph banner, JSON-LD schemas, sitemap, and robots.txt.
+- [x] Email Verification via 6-digit OTP (Resend):
+  - Integrated `resend` Python SDK in backend with transactional HTML template (`DESIGN.md`).
+  - Added fields to `User` model: `verification_code`, `verification_code_expires_at`, `email_verified_at`, `is_verified`.
+  - Configured endpoints `POST /api/v1/auth/verify-code` and `POST /api/v1/auth/resend-code` (with 60s cooldown).
+  - Created `OtpVerificationModal` with 6 auto-advancing digit inputs, paste handling, and 60s countdown timer.
+  - Guarded registration and spot booking flows.
 
 ### Up Next in Priority Order:
-1. **Email Verification via 6-digit OTP (Resend)**:
-   - Integrate `resend` Python SDK in backend.
-   - Add fields to `User` model: `verification_code`, `verification_code_expires_at`, `email_verified_at`.
-   - Dispatch emails from `verificacion@patodev.com` or `hola@patodev.com` using the verified domain `patodev.com`.
-   - Provide endpoints `POST /api/v1/auth/verify-code` and `POST /api/v1/auth/resend-code`.
-   - Add modal dialog in frontend during registration / before checkout.
-   - Set `RESEND_API_KEY` in Coolify environment variables.
-2. **End-to-End Sandbox Booking Test**:
+1. **End-to-End Sandbox Booking Test**:
    - Create sample listings in León, BJX Airport, and CDMX.
    - Complete guest reservation with Stripe test card (`4242...`).
    - Confirm host dashboard reflects incoming booking and payout status.

@@ -28,6 +28,8 @@ class UserOut(UserBase):
     id: str
     avatar_url: Optional[str] = None
     phone_verified_at: Optional[datetime] = None
+    email_verified_at: Optional[datetime] = None
+    is_verified: bool = False
     stripe_account_id: Optional[str] = None
     stripe_customer_id: Optional[str] = None
     identity_status: str
@@ -35,6 +37,20 @@ class UserOut(UserBase):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class VerifyCodeRequest(BaseModel):
+    code: str = Field(..., min_length=6, max_length=6)
+    email: Optional[EmailStr] = None
+
+
+class ResendCodeRequest(BaseModel):
+    email: Optional[EmailStr] = None
+
+
+class VerifyCodeResponse(BaseModel):
+    message: str
+    user: UserOut
 
 
 class Token(BaseModel):

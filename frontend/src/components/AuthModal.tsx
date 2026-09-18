@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { api, User } from "@/lib/api";
 import { X, Lock, Mail, User as UserIcon, Phone } from "lucide-react";
 
+import OtpVerificationModal from "./OtpVerificationModal";
+
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -19,7 +21,31 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (!isOpen) return null;
+  // OTP Verification state
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [pendingToken, setPendingToken] = useState("");
+  const [pendingEmail, setPendingEmail] = useState("");
+
+  if (!isOpen && !showOtpModal) return null;
+
+  if (showOtpModal) {
+    return (
+      <OtpVerificationModal
+        isOpen={true}
+        email={pendingEmail}
+        token={pendingToken}
+        onClose={() => {
+          setShowOtpModal(false);
+          onClose();
+        }}
+        onSuccess={(verifiedUser) => {
+          setShowOtpModal(false);
+          onSuccess(verifiedUser, pendingToken);
+          onClose();
+        }}
+      />
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,8 +63,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         // Auto-login after registration
         const loginRes = await api.auth.login({ email, password });
         localStorage.setItem("cochera_token", loginRes.access_token);
-        onSuccess(loginRes.user, loginRes.access_token);
-        onClose();
+        setPendingToken(loginRes.access_token);
+        setPendingEmail(email);
+        setShowOtpModal(true);
       }
     } catch (err: any) {
       setError(err.message || "Ocurrió un error");
